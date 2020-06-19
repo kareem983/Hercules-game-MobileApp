@@ -25,7 +25,7 @@ public class Setting  implements Screen{
     
     private Main game;
 
-     public Stage stage;
+    public Stage stage;
     private Skin skin;
     private Texture background;
     private Sprite backgroundd;
@@ -116,8 +116,8 @@ public class Setting  implements Screen{
        //Main.batch.draw(background, 0, 0, Main.WIDTH, Main.HEIGHT);
         backgroundd.draw(game.batch);
         Main.batch.end();
-       stage.act();
-       stage.draw();
+        stage.act();
+        stage.draw();
        
       /* if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
            game.setScreen(new StartMenu(game));

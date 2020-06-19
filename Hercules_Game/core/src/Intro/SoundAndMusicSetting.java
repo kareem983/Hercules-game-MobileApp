@@ -34,10 +34,9 @@ public class SoundAndMusicSetting implements Screen {
     private Viewport viewport;
     private BitmapFont FONT;
     private Label.LabelStyle font;
-    public CheckBox cb;
+  // public CheckBox cb;
 
     public SoundAndMusicSetting(Main game) {
-        cb = new CheckBox("Mute", new Skin(Gdx.files.internal("Fonts\\uiskin.json")));
         this.game = game;
         background = new Texture(Gdx.files.internal("Intros\\0.jpg"));
         backgroundd=new Sprite(background);
@@ -49,12 +48,8 @@ public class SoundAndMusicSetting implements Screen {
         Gdx.input.setInputProcessor(stage);   // MAKE THE STAGE ACCEPTS EVENTS
         FONT = new BitmapFont(Gdx.files.internal("Fonts\\HUD.fnt"));
         font = new Label.LabelStyle(FONT, null);
-        if (Main.vol == 0) {
-            cb.setChecked(true);
-        } else {
-            cb.setChecked(false);
-        }
-        createBasicSkin();
+
+       createBasicSkin();
         Buttons();
     }
 
@@ -81,16 +76,17 @@ public class SoundAndMusicSetting implements Screen {
 
     void Buttons() {
         Label MusicAndSound = new Label("Music And Sound Volume", font);
-        MusicAndSound.setPosition(Gdx.graphics.getWidth() / 2 -50+ Main.x, Gdx.graphics.getHeight() / 2 + 180 + Main.y);
+        MusicAndSound.setPosition(Gdx.graphics.getWidth() / 2 - MusicAndSound.getWidth()/2, Gdx.graphics.getHeight() / 2+100);
         stage.addActor(MusicAndSound);
 
         final TextButton volumeup = new TextButton("volume up", skin);
         final TextButton volumedown = new TextButton("volume down", skin);
-        volumeup.setPosition(MusicAndSound.getX(), MusicAndSound.getY() - 100);
+        volumeup.setPosition(MusicAndSound.getX() +500, MusicAndSound.getY() - 200);
+
         volumeup.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (Main.vol < 1) {
+                if (Main.vol< 1) {
                     Main.vol += 0.1f;
                     volumedown.setText("volume down");
                     volumedown.setTouchable(Touchable.enabled);
@@ -103,7 +99,8 @@ public class SoundAndMusicSetting implements Screen {
         });
         stage.addActor(volumeup);
 
-        volumedown.setPosition(MusicAndSound.getX() + 400, MusicAndSound.getY() - 100);
+        volumedown.setPosition(MusicAndSound.getX()-200, MusicAndSound.getY() - 200);
+
         volumedown.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -120,6 +117,14 @@ public class SoundAndMusicSetting implements Screen {
         });
         stage.addActor(volumedown);
 
+        /*
+        cb = new CheckBox("Mute", new Skin(Gdx.files.internal("UI/uiskin.json")));
+        if (Main.vol == 0) {
+            cb.setChecked(true);
+        } else {
+            cb.setChecked(false);
+        }
+
         cb.setPosition(volumeup.getX() + 220, volumeup.getY() - 100);
         cb.setSize(300, 50);
         cb.scaleBy(2f);
@@ -134,9 +139,31 @@ public class SoundAndMusicSetting implements Screen {
             }
         });
 
-        stage.addActor(cb);
-        TextButton save = new TextButton("Save", skin);
-        save.setPosition(MusicAndSound.getX(), cb.getY() - 100);
+        stage.addActor(cb);*/
+
+
+       final TextButton MuteBtn = new TextButton(Main.MuteBtnName, skin);
+        MuteBtn.setPosition(MusicAndSound.getX()-200, MusicAndSound.getY() - 350);
+        MuteBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if(Main.TestMuteNum%2==0){
+                    Main.vol=0;
+                    Main.MuteBtnName="Unmute";
+                }
+                else{
+                    Main.vol=1;
+                    Main.MuteBtnName="mute";
+                }
+                Main.TestMuteNum++;
+                MuteBtn.setText(Main.MuteBtnName);
+            }
+        });
+        stage.addActor(MuteBtn);
+
+
+        TextButton save = new TextButton("Save Changes", skin);
+        save.setPosition(MusicAndSound.getX()+500, MusicAndSound.getY() - 350);
         save.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -144,8 +171,10 @@ public class SoundAndMusicSetting implements Screen {
             }
         });
         stage.addActor(save);
+
+
         TextButton back = new TextButton("Back", skin);
-        back.setPosition(MusicAndSound.getX() + 400,  cb.getY() - 100);
+        back.setPosition(MusicAndSound.getX() + 200,  MusicAndSound.getY() - 500);
 
         back.addListener(new ClickListener() {  // RESET DEFAULT
             @Override
@@ -154,6 +183,7 @@ public class SoundAndMusicSetting implements Screen {
             }
         });
         stage.addActor(back);
+
     }
 
     @Override
