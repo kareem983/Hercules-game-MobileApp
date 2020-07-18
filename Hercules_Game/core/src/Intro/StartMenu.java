@@ -1,4 +1,3 @@
-
 package Intro;
 
 import com.Hercules.game.Main;
@@ -7,61 +6,53 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
-import Screens.PlayScreen;
+public class StartMenu implements Screen {
 
-
-public class StartMenu implements Screen{
-    
     private Main game;
-    private int buttonOffset;
-    private int verticalPos;
     public Stage stage;
     private Skin skin;
     private Texture background;
-    private Sprite  backgroundd;
     private Music music;
+    private Viewport viewport;
     
     public StartMenu(Main game) {
-        music = game.manager.get("Audio//Hercules - sounds//IntroMainMenu.mp3", Music.class);
-        music.setLooping(true);
-        music.setVolume(Main.vol);
+        music = game.manager.get("Audio//Hercules - sounds//MainMenu.mp3", Music.class);
+        music.setVolume(Main.vol);        
         music.play();
         this.game = game;
         background = new Texture(Gdx.files.internal("Intros\\0.jpg"));
-        backgroundd=new Sprite(background);
-        backgroundd.setPosition(-100, 0);
-        backgroundd.setSize( game.WIDTH+550, game.HEIGHT+300);
-
-        buttonOffset = 20;
-        verticalPos = 40;
-        stage = new Stage();
+        viewport = new StretchViewport(Main.WIDTH, Main.HEIGHT, new OrthographicCamera());
+        stage = new Stage(viewport, ((Main) game).batch);
         Gdx.input.setInputProcessor(stage);   // MAKE THE STAGE ACCEPTS EVENTS
-        
-        createBasicSkin(); 
+
+        createBasicSkin();
         createActions();
+        
     }
-    
+
     private void createBasicSkin() {
         BitmapFont font = new BitmapFont(Gdx.files.internal("Fonts\\Menu.fnt"));
         skin = new Skin();
         skin.add("default", font);
-        
+
         // CREATE A TEXTURE
         Pixmap pixmap = new Pixmap((int) Gdx.graphics.getWidth() / 4, (int) Gdx.graphics.getHeight() / 10, Pixmap.Format.RGB888);
         pixmap.setColor(Color.DARK_GRAY);
         pixmap.fill();
         skin.add("Background", new Texture(pixmap));
-        
+
         // CREATE A BUTTON STYLE
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.up = skin.newDrawable("Background", Color.DARK_GRAY);
@@ -71,93 +62,92 @@ public class StartMenu implements Screen{
         textButtonStyle.font = skin.getFont("default");
         skin.add("default", textButtonStyle);
     }
-    
+
     private void createActions() {
         TextButton startGame = new TextButton("Start Game", skin);
-        startGame.setPosition(Gdx.graphics.getWidth() / 2 - startGame.getWidth() / 2, Gdx.graphics.getHeight() / 2 + 2*(startGame.getHeight() + buttonOffset) -verticalPos);
+        startGame.setPosition(Gdx.graphics.getWidth() / 2 - Gdx.graphics.getWidth() / 8 , Gdx.graphics.getHeight() / 2f+100);
         startGame.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y){
-                //game.setScreen(new Username(game, music));
-                music.stop();
-                game.setScreen(new PlayScreen(game));
-                returnClass().dispose();
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new Username(game, music));
+                getThisClass().dispose();
             }
         });
         stage.addActor(startGame);
-        
+
         TextButton gameInstructions = new TextButton("Game Instructions", skin);
-        gameInstructions.setPosition(Gdx.graphics.getWidth() / 2 - startGame.getWidth() / 2, Gdx.graphics.getHeight() / 2 + (startGame.getHeight() + buttonOffset) -verticalPos);
+        gameInstructions.setPosition(startGame.getX() , startGame.getY()-120);
         gameInstructions.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y){
+            public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new GameInstruction(game));
-                returnClass().dispose();
+                getThisClass().dispose();
             }
         });
         stage.addActor(gameInstructions);
-        
-        /*TextButton scoreBoard = new TextButton("Score Board", skin);
-        scoreBoard.setPosition(Gdx.graphics.getWidth() / 2 - startGame.getWidth() / 2, Gdx.graphics.getHeight() / 2 -verticalPos);
-        scoreBoard.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                game.setScreen(new ScoreBoard(game));
-                returnClass().dispose();
-            }
-        });
-        stage.addActor(scoreBoard);
-        */
+
         TextButton levelPassword = new TextButton("Level Password", skin);
-        levelPassword.setPosition(Gdx.graphics.getWidth() / 2 - startGame.getWidth() / 2, Gdx.graphics.getHeight() / 2 -verticalPos);
+        levelPassword.setPosition(gameInstructions.getX() ,gameInstructions.getY()-120);
         levelPassword.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y){
+            public void clicked(InputEvent event, float x, float y) {
+                music.stop();
                 game.setScreen(new LevelPassword(game));
-                returnClass().dispose();
+                getThisClass().dispose();
             }
         });
         stage.addActor(levelPassword);
 
-        TextButton  settings= new TextButton("Settings", skin);
-        settings.setPosition(Gdx.graphics.getWidth() / 2 - startGame.getWidth() / 2, Gdx.graphics.getHeight() / 2 - (startGame.getHeight() + buttonOffset) -verticalPos);
+        TextButton scoreBoard = new TextButton("Score Board", skin);
+        scoreBoard.setPosition(levelPassword.getX() , levelPassword.getY()-120);
+        scoreBoard.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new ScoreBoard(game));
+                getThisClass().dispose();
+            }
+        });
+        stage.addActor(scoreBoard);
+
+        TextButton settings = new TextButton("Settings", skin);
+        settings.setPosition(scoreBoard.getX() ,scoreBoard.getY()-120);
         settings.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y){
+            public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new Setting(game));
-                returnClass().dispose();
+                getThisClass().dispose();
             }
         });
         stage.addActor(settings);
 
         TextButton exit = new TextButton("Exit", skin);
-        exit.setPosition(Gdx.graphics.getWidth() / 2 - startGame.getWidth() / 2, Gdx.graphics.getHeight() / 2 - 2*(startGame.getHeight() + buttonOffset) -verticalPos);
+        exit.setPosition(settings.getX() , settings.getY()-120);
         exit.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y){
+            public void clicked(InputEvent event, float x, float y) {
                 System.exit(0);
-                returnClass().dispose();
+                getThisClass().dispose();
             }
         });
         stage.addActor(exit);
     }
-    
-    private StartMenu returnClass(){
+    private StartMenu getThisClass(){
         return this;
     }
-    
+
     @Override
     public void render(float arg0) {
-       Gdx.gl.glClearColor(0, 0, 0, 1);
-       Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-       game.batch.begin();
-        //    game.batch.draw(background, 0, 0, game.WIDTH+550, game.HEIGHT+300);
-        backgroundd.draw(game.batch);
-        game.batch.end();
-       stage.act();
-       stage.draw();
+        music.setVolume(Main.vol);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Main.batch.begin();
+            game.batch.draw(background, 0, 0, Main.WIDTH, Main.HEIGHT);
+        Main.batch.end();
+        stage.act();
+        stage.draw();
+
     }
-    
+
     @Override
     public void show() {
     }
@@ -181,7 +171,6 @@ public class StartMenu implements Screen{
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose();
     }
-    
+
 }

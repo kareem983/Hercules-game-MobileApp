@@ -5,44 +5,52 @@ import com.Hercules.game.Main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Setting  implements Screen{
     
     private Main game;
-
+    private ImageButton back;
     public Stage stage;
     private Skin skin;
     private Texture background;
-    private Sprite backgroundd;
     private Viewport viewport;
-    public Setting( Main game) {
+
+    public Setting(final Main game) {
         this.game = game;
-        background = new Texture(Gdx.files.internal("Intros\\0.jpg"));
-        backgroundd=new Sprite(background);
-        backgroundd.setPosition(-100, 0);
-        backgroundd.setSize( game.WIDTH+550, game.HEIGHT+300);
+        background = new Texture(Gdx.files.internal("Intros\\000.jpg"));
         viewport = new StretchViewport(Main.WIDTH, Main.HEIGHT,  new OrthographicCamera());
         stage = new Stage(viewport, ((Main) game).batch);
-         Gdx.input.setInputProcessor(stage);   
           createBasicSkin(); 
           Buttons();
-       
+        back = new ImageButton (new TextureRegionDrawable(new TextureRegion(new Texture("Intros\\Back.png"))));
+        back.setPosition(80f, Main.HEIGHT/1.2f);
+        back.addListener(new ClickListener() {
+           public void clicked(InputEvent event, float x, float y){
+               game.setScreen(new StartMenu(game));
+               stage.dispose();
+           }
+        });
+        stage.addActor(back);
+        Gdx.input.setInputProcessor(stage);
     }
+
     private void createBasicSkin() {
         BitmapFont font = new BitmapFont(Gdx.files.internal("Fonts\\Menu.fnt"));
         skin = new Skin();
@@ -63,45 +71,37 @@ public class Setting  implements Screen{
         textButtonStyle.font = skin.getFont("default");
         skin.add("default", textButtonStyle);
     }
-    void Buttons()
-    {
-        
-        /*TextButton controlerkeys  = new TextButton("Controller keys",skin);
-        controlerkeys.setPosition(Gdx.graphics.getWidth() / 2 +150+Main.x, Gdx.graphics.getHeight() / 2 +150+Main.y);
+    void Buttons() {
+        TextButton controlerkeys  = new TextButton("Controller keys",skin);
+        controlerkeys.setPosition(game.WIDTH / 3, game.HEIGHT / 2 + 150);
         controlerkeys.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
-                game.setScreen(new ControlerSetting(game));
+                game.setScreen(new ButtonsSetting(game));
+                stage.dispose();
             }
         });
         stage.addActor(controlerkeys);
-        */
         TextButton MusicandSound = new TextButton("Music and Sound", skin);
-        MusicandSound.setPosition((Gdx.graphics.getWidth() / 2 - MusicandSound.getWidth() / 2)-100, Gdx.graphics.getHeight() / 2 + 2*(MusicandSound.getHeight() + 20) -400);
+        MusicandSound.setPosition(controlerkeys.getX() , controlerkeys.getY()-140);
         MusicandSound.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 game.setScreen(new SoundAndMusicSetting(game));
+                stage.dispose();
             }
         });
         stage.addActor(MusicandSound);
         
-        /*TextButton screendisplay  = new TextButton("Screen Display", skin);
-        screendisplay.setPosition(MusicandSound.getX() ,MusicandSound.getY()-100);
-        screendisplay.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                game.setScreen(new ScreenSetting(game));
-            }
-        });
-        stage.addActor(screendisplay);
-        */
+
         TextButton back = new TextButton("Back", skin);
-        back.setPosition(MusicandSound.getX() ,MusicandSound.getY()-120);
+        back.setPosition(MusicandSound.getX(),MusicandSound.getY()-140);
+        
         back.addListener(new ClickListener() {  // RESET DEFAULT
             @Override
             public void clicked(InputEvent event, float x, float y) { 
                 game.setScreen(new StartMenu(game));
+                stage.dispose();
             }
         });
         stage.addActor(back);
@@ -112,17 +112,10 @@ public class Setting  implements Screen{
        Gdx.gl.glClearColor(0, 0, 0, 1);
        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
        Main.batch.begin();
-
-       //Main.batch.draw(background, 0, 0, Main.WIDTH, Main.HEIGHT);
-        backgroundd.draw(game.batch);
-        Main.batch.end();
-        stage.act();
-        stage.draw();
-       
-      /* if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
-           game.setScreen(new StartMenu(game));
-       }*/
-       
+        Main.batch.draw(background, 0, 0, Main.WIDTH, Main.HEIGHT);
+        Main.batch.end(); 
+       stage.act();
+       stage.draw();
     }
 
     @Override

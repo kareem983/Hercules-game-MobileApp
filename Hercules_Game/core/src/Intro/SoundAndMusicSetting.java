@@ -11,16 +11,19 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -30,13 +33,13 @@ public class SoundAndMusicSetting implements Screen {
     private Texture background;
     private Sprite backgroundd;
     public Stage stage;
+    private ImageButton back;
     private Skin skin;
     private Viewport viewport;
     private BitmapFont FONT;
     private Label.LabelStyle font;
-  // public CheckBox cb;
 
-    public SoundAndMusicSetting(Main game) {
+    public SoundAndMusicSetting(final Main game) {
         this.game = game;
         background = new Texture(Gdx.files.internal("Intros\\0.jpg"));
         backgroundd=new Sprite(background);
@@ -45,12 +48,23 @@ public class SoundAndMusicSetting implements Screen {
 
         viewport = new StretchViewport(Main.WIDTH, Main.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, ((Main) game).batch);
-        Gdx.input.setInputProcessor(stage);   // MAKE THE STAGE ACCEPTS EVENTS
         FONT = new BitmapFont(Gdx.files.internal("Fonts\\HUD.fnt"));
         font = new Label.LabelStyle(FONT, null);
 
-       createBasicSkin();
+        createBasicSkin();
         Buttons();
+
+        back = new ImageButton (new TextureRegionDrawable(new TextureRegion(new Texture("Intros\\Back.png"))));
+        back.setPosition(80f, Main.HEIGHT/1.2f);
+        back.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y){
+                game.setScreen(new StartMenu(game));
+                stage.dispose();
+            }
+        });
+        stage.addActor(back);
+        Gdx.input.setInputProcessor(stage);
+
     }
 
     private void createBasicSkin() {
@@ -117,32 +131,7 @@ public class SoundAndMusicSetting implements Screen {
         });
         stage.addActor(volumedown);
 
-        /*
-        cb = new CheckBox("Mute", new Skin(Gdx.files.internal("UI/uiskin.json")));
-        if (Main.vol == 0) {
-            cb.setChecked(true);
-        } else {
-            cb.setChecked(false);
-        }
-
-        cb.setPosition(volumeup.getX() + 220, volumeup.getY() - 100);
-        cb.setSize(300, 50);
-        cb.scaleBy(2f);
-        cb.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (cb.isChecked()) {
-                    Main.vol = 0;
-                } else {
-                    Main.vol = 1;
-                }
-            }
-        });
-
-        stage.addActor(cb);*/
-
-
-       final TextButton MuteBtn = new TextButton(Main.MuteBtnName, skin);
+        final TextButton MuteBtn = new TextButton(Main.MuteBtnName, skin);
         MuteBtn.setPosition(MusicAndSound.getX()-200, MusicAndSound.getY() - 350);
         MuteBtn.addListener(new ClickListener() {
             @Override
@@ -180,6 +169,7 @@ public class SoundAndMusicSetting implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new Setting(game));
+                stage.dispose();
             }
         });
         stage.addActor(back);
@@ -191,8 +181,8 @@ public class SoundAndMusicSetting implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Main.batch.begin();
-       // Main.batch.draw(background, 0, 0, Main.WIDTH, Main.HEIGHT);
-         backgroundd.draw(game.batch);
+        // Main.batch.draw(background, 0, 0, Main.WIDTH, Main.HEIGHT);
+        backgroundd.draw(game.batch);
         Main.batch.end();
         stage.act();
         stage.draw();
