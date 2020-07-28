@@ -1,2 +1,2 @@
 # Hercules-game-MobileApp
-the game with java
+Hercules game Mobile App with java 
